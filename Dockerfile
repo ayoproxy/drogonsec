@@ -30,7 +30,7 @@ FROM alpine:3.19
 RUN addgroup -g 1001 drogonsec && \
     adduser -D -u 1001 -G drogonsec drogonsec
 
-# Install CA certificates for HTTPS calls (OSV API, Claude AI)
+# Install CA certificates for HTTPS calls (OSV API, AI endpoint)
 RUN apk add --no-cache ca-certificates git
 
 # Copy binary from builder
@@ -49,4 +49,4 @@ CMD ["scan", "."]
 # Usage:
 #   docker run --rm -v $(pwd):/scan drogonsec-scanner:latest
 #   docker run --rm -v $(pwd):/scan drogonsec-scanner:latest scan . --format json
-#   docker run --rm -v $(pwd):/scan -e ANTHROPIC_API_KEY=sk-... drogonsec-scanner:latest scan . --enable-ai
+#   docker run --rm -v $(pwd):/scan -e AI_API_KEY=... drogonsec-scanner:latest scan . --enable-ai

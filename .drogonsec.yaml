@@ -54,12 +54,18 @@ output:
   # Show code snippets in text output
   show_code: true
 
-# Claude AI Integration
+# AI Integration (Enterprise)
 ai:
   # Enable AI-powered remediation suggestions
   enabled: false
-  # API key - prefer ANTHROPIC_API_KEY environment variable
+  # API key - prefer AI_API_KEY environment variable
   api_key: ""
+  # AI provider: anthropic (default) | openai | azure | custom
+  provider: "anthropic"
+  # Model name override (leave empty to use provider default)
+  model: ""
+  # Custom AI endpoint URL (for self-hosted or Enterprise AI)
+  endpoint: ""
   # Only enrich HIGH and CRITICAL findings (reduces API calls)
   high_severity_only: true
 

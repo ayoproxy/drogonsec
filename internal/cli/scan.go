@@ -17,19 +17,22 @@ import (
 )
 
 var (
-	outputFormat   string
-	outputFile     string
-	ignorePaths    []string
-	enableAI       bool
-	claudeAPIKey   string
-	enableGitScan  bool
-	disableSAST    bool
-	disableSCA     bool
-	disableLeaks   bool
-	severity       string
-	languages      []string
-	maxWorkers     int
-	rulesDir       string
+	outputFormat  string
+	outputFile    string
+	ignorePaths   []string
+	enableAI      bool
+	aiAPIKey      string
+	aiProvider    string
+	aiModel       string
+	aiEndpoint    string
+	enableGitScan bool
+	disableSAST   bool
+	disableSCA    bool
+	disableLeaks  bool
+	severity      string
+	languages     []string
+	maxWorkers    int
+	rulesDir      string
 )
 
 var scanCmd = &cobra.Command{
@@ -55,8 +58,11 @@ func init() {
 	scanCmd.Flags().StringVarP(&outputFormat, "format", "f", "text", "output format: text, json, sarif, html")
 	scanCmd.Flags().StringVarP(&outputFile, "output", "o", "", "output file path (default: stdout)")
 	scanCmd.Flags().StringSliceVar(&ignorePaths, "ignore", []string{}, "paths to ignore (comma-separated)")
-	scanCmd.Flags().BoolVar(&enableAI, "enable-ai", false, "[Enterprise] enable Claude AI remediation suggestions (requires ANTHROPIC_API_KEY)")
-	scanCmd.Flags().StringVar(&claudeAPIKey, "ai-key", "", "[Enterprise] Claude API key (or set ANTHROPIC_API_KEY env var)")
+	scanCmd.Flags().BoolVar(&enableAI, "enable-ai", false, "[Enterprise] enable AI remediation suggestions (requires AI_API_KEY)")
+	scanCmd.Flags().StringVar(&aiAPIKey, "ai-key", "", "[Enterprise] AI provider API key (or set AI_API_KEY env var)")
+	scanCmd.Flags().StringVar(&aiProvider, "ai-provider", "anthropic", "[Enterprise] AI provider: anthropic | openai | azure | custom")
+	scanCmd.Flags().StringVar(&aiModel, "ai-model", "", "[Enterprise] AI model name override")
+	scanCmd.Flags().StringVar(&aiEndpoint, "ai-endpoint", "", "[Enterprise] custom AI API endpoint URL")
 	scanCmd.Flags().BoolVar(&enableGitScan, "git-history", false, "scan git history for leaked secrets")
 	scanCmd.Flags().BoolVar(&disableSAST, "no-sast", false, "disable SAST engine")
 	scanCmd.Flags().BoolVar(&disableSCA, "no-sca", false, "disable SCA engine")
@@ -92,24 +98,30 @@ func runScan(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("path does not exist: %s", absPath)
 	}
 
-	// Resolver API key do Claude
-	apiKey := claudeAPIKey
+	// Resolve AI API key: --ai-key flag → AI_API_KEY → ANTHROPIC_API_KEY (fallback)
+	apiKey := aiAPIKey
 	if apiKey == "" {
-		apiKey = os.Getenv("ANTHROPIC_API_KEY")
+		apiKey = os.Getenv("AI_API_KEY")
+	}
+	if apiKey == "" {
+		apiKey = os.Getenv("ANTHROPIC_API_KEY") // silent fallback for backward compat
 	}
 	if enableAI && apiKey == "" {
-		return fmt.Errorf("Claude API key required. Use --ai-key flag or set ANTHROPIC_API_KEY env var")
+		return fmt.Errorf("AI API key required. Use --ai-key flag or set AI_API_KEY env var")
 	}
 
 	// Build scan configuration
 	cfg := &config.ScanConfig{
-		TargetPath:    absPath,
-		OutputFormat:  outputFormat,
-		OutputFile:    outputFile,
-		IgnorePaths:   ignorePaths,
-		EnableAI:      enableAI,
-		ClaudeAPIKey:  apiKey,
-		GitHistory:    enableGitScan,
+		TargetPath:   absPath,
+		OutputFormat: outputFormat,
+		OutputFile:   outputFile,
+		IgnorePaths:  ignorePaths,
+		EnableAI:     enableAI,
+		AIAPIKey:     apiKey,
+		AIProvider:   aiProvider,
+		AIModel:      aiModel,
+		AIEndpoint:   aiEndpoint,
+		GitHistory:   enableGitScan,
 		EnableSAST:    !disableSAST,
 		EnableSCA:     !disableSCA,
 		EnableLeaks:   !disableLeaks,
@@ -139,7 +151,7 @@ func runScan(cmd *cobra.Command, args []string) error {
 
 	// AI-powered remediation enrichment (runs after scan, avoids import cycle)
 	if cfg.EnableAI && apiKey != "" {
-		enrichResult(result, apiKey)
+		enrichResult(result, cfg)
 	}
 
 	// Generate report
@@ -174,9 +186,9 @@ func runScan(cmd *cobra.Command, args []string) error {
 }
 
 
-// enrichResult calls Claude AI to add remediation suggestions to findings
-func enrichResult(result *analyzer.ScanResult, apiKey string) {
-	client := ai.New(apiKey)
+// enrichResult calls the AI engine to add remediation suggestions to findings.
+func enrichResult(result *analyzer.ScanResult, cfg *config.ScanConfig) {
+	client := ai.NewFromScanConfig(cfg)
 
 	// Count findings that need enrichment
 	var toEnrich int

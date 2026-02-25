@@ -7,7 +7,10 @@ type ScanConfig struct {
 	OutputFile   string
 	IgnorePaths  []string
 	EnableAI     bool
-	ClaudeAPIKey string
+	AIAPIKey     string // generic AI provider key
+	AIProvider   string // "anthropic" (default) | "openai" | "azure" | "custom"
+	AIModel      string // model override (e.g. "gpt-4o", "claude-sonnet-4")
+	AIEndpoint   string // custom API endpoint for self-hosted / Enterprise AI
 	GitHistory   bool
 	EnableSAST   bool
 	EnableSCA    bool

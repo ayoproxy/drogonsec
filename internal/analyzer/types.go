@@ -24,7 +24,7 @@ type Finding struct {
 	CVSS        float64             `json:"cvss"`
 	References  []string            `json:"references"`
 	Remediation string              `json:"remediation"`   // static remediation
-	AIRemediation string            `json:"ai_remediation,omitempty"` // Claude AI suggestion
+	AIRemediation string            `json:"ai_remediation,omitempty"` // AI remediation suggestion
 	FalsePositive bool              `json:"false_positive"`
 }
 

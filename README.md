@@ -17,7 +17,7 @@
 | **SCA**  | Software Composition Analysis — scan dependencies for CVEs |
 | **Leaks** | Secret detection — 50+ patterns (AWS, GCP, GitHub, JWT, SSH keys...) |
 | **IaC**  | Infrastructure as Code misconfigurations (Terraform, Kubernetes) |
-| **AI**   | Claude AI-powered remediation suggestions |
+| **AI**   | AI-powered remediation suggestions (Enterprise) |
 
 ### Security Frameworks
 - **OWASP Top 10:2025** — All 10 categories covered (including 2 new: Supply Chain & Mishandling Exceptions)
@@ -58,8 +58,8 @@ drogonsec scan ./myproject --format json --output report.json
 # Scan with HTML report
 drogonsec scan . --format html --output report.html
 
-# Scan with AI remediation (requires Claude API key)
-export ANTHROPIC_API_KEY="sk-ant-..."
+# Scan with AI remediation [Enterprise] (requires AI_API_KEY)
+export AI_API_KEY="..."
 drogonsec scan . --enable-ai
 
 # Scan git history for secrets
@@ -156,16 +156,22 @@ fail_on:
 
 ---
 
-## Claude AI Integration
+## AI Integration (Enterprise)
 
-DragonSec integrates with Claude AI (claude-sonnet-4) to provide intelligent, context-aware remediation suggestions:
+DrogonSec includes AI-powered remediation for Enterprise users, providing intelligent, context-aware fixes for detected vulnerabilities:
 
 ```bash
-# Set your Anthropic API key
-export ANTHROPIC_API_KEY="sk-ant-..."
+# Set your AI provider API key
+export AI_API_KEY="..."
 
 # Enable AI remediation
 drogonsec scan . --enable-ai
+
+# Enterprise: use your own AI provider
+drogonsec scan . --enable-ai \
+  --ai-provider openai \
+  --ai-model gpt-4o \
+  --ai-endpoint https://your-endpoint/v1/messages
 
 # Example output:
 # 🤖 AI Remediation:
@@ -219,7 +225,7 @@ drogonsec/
 │   ├── leaks/          # Secret detection engine
 │   ├── sca/            # Dependency analysis engine
 │   ├── reporter/       # Text/JSON/SARIF/HTML reporters
-│   ├── ai/             # Claude AI integration
+│   ├── ai/             # AI remediation engine (Enterprise)
 │   └── config/         # Types and configuration
 └── rules/              # YAML rule definitions (community-extensible)
 ```
@@ -249,4 +255,4 @@ Apache License 2.0 — See [LICENSE](LICENSE)
 
 Inspired by [Horusec](https://github.com/ZupIT/horusec) (ZupIT). DragonSec is its modern, actively maintained successor with enhanced capabilities.
 
-Built with: Go, Cobra, Viper, go-git, and Claude AI.
+Built with: Go, Cobra, Viper, go-git.
