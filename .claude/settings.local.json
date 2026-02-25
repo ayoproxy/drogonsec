@@ -29,7 +29,12 @@
       "Bash(gh run view:*)",
       "Bash(git check-ignore:*)",
       "Bash(ls:*)",
-      "Bash(/tmp/drogonsec:*)"
+      "Bash(/tmp/drogonsec:*)",
+      "Bash(CLICOLOR_FORCE=1 TERM=xterm-256color /tmp/drogonsec:*)",
+      "Bash(xxd:*)",
+      "Bash(script -q /dev/null /tmp/drogonsec --help)",
+      "Bash(python3:*)",
+      "Bash(git revert:*)"
     ]
   }
 }
