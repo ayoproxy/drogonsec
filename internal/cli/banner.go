@@ -37,7 +37,8 @@ func PrintDragonBanner() {
 	title := color.New(color.FgHiCyan, color.Bold).SprintFunc()
 
 	// ── Frame helpers (W = inner width between ╔ and ╗) ──────────────────────
-	const W = 78
+	// W=80 accommodates the DROGONSEC title lines (≤78 runes wide)
+	const W = 80
 
 	topBdr := nCyan("  ╔") + nCyan(strings.Repeat("═", W)) + nCyan("╗")
 	midBdr := nCyan("  ╠") + nCyan(strings.Repeat("═", W)) + nCyan("╣")
@@ -56,26 +57,24 @@ func PrintDragonBanner() {
 			bold("NEURAL THREAT SCANNER") +
 			dim("  │  SAST · SCA · LEAKS · GIT-HISTORY · IaC")))
 	fmt.Println(midBdr)
-	fmt.Println()
 
-	// ── DROGONSEC  — large ASCII title ───────────────────────────────────────
-	fmt.Println("  " + title(` ██████╗ ██████╗  ██████╗  ██████╗  ██████╗ ███╗  ██╗███████╗███████╗ ██████╗`))
-	fmt.Println("  " + title(` ██╔══██╗██╔══██╗██╔═══██╗██╔════╝ ██╔═══██╗████╗ ██║██╔════╝██╔════╝██╔════╝`))
-	fmt.Println("  " + title(` ██║  ██║██████╔╝██║   ██║██║  ███╗██║   ██║██╔██╗██║███████╗█████╗  ██║     `))
-	fmt.Println("  " + title(` ██║  ██║██╔══██╗██║   ██║██║   ██║██║   ██║██║╚██╗██║╚════██║██╔══╝  ██║     `))
-	fmt.Println("  " + title(` ██████╔╝██║  ██║╚██████╔╝╚██████╔╝╚██████╔╝██║ ╚████║███████║███████╗╚██████╗`))
-	fmt.Println("  " + title(` ╚═════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝╚══════╝╚══════╝ ╚═════╝`))
+	// ── DROGONSEC  — large ASCII title (inside frame) ─────────────────────────
+	fmt.Println(boxLine(""))
+	fmt.Println(boxLine(title(` ██████╗ ██████╗  ██████╗  ██████╗  ██████╗ ███╗  ██╗███████╗███████╗ ██████╗`)))
+	fmt.Println(boxLine(title(` ██╔══██╗██╔══██╗██╔═══██╗██╔════╝ ██╔═══██╗████╗ ██║██╔════╝██╔════╝██╔════╝`)))
+	fmt.Println(boxLine(title(` ██║  ██║██████╔╝██║   ██║██║  ███╗██║   ██║██╔██╗██║███████╗█████╗  ██║     `)))
+	fmt.Println(boxLine(title(` ██║  ██║██╔══██╗██║   ██║██║   ██║██║   ██║██║╚██╗██║╚════██║██╔══╝  ██║     `)))
+	fmt.Println(boxLine(title(` ██████╔╝██║  ██║╚██████╔╝╚██████╔╝╚██████╔╝██║ ╚████║███████║███████╗╚██████╗`)))
+	fmt.Println(boxLine(title(` ╚═════╝ ╚═╝  ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝╚══════╝╚══════╝ ╚═════╝`)))
+	fmt.Println(boxLine(""))
 
-	fmt.Println()
-
-	// ── Security statement ────────────────────────────────────────────────────
-	fmt.Printf("  %s %s  %s %s  %s %s  %s\n",
-		nMag("◆"), bold("HUNT VULNERABILITIES"),
-		nMag("◆"), bold("BREAK WALLS"),
-		nMag("◆"), bold("SECURE CODE"),
-		nMag("◆"))
-
-	fmt.Println()
+	// ── Security statement (inside frame) ─────────────────────────────────────
+	fmt.Println(boxLine(
+		nMag("◆") + " " + bold("HUNT VULNERABILITIES") + "  " +
+			nMag("◆") + " " + bold("BREAK WALLS") + "  " +
+			nMag("◆") + " " + bold("SECURE CODE") + "  " +
+			nMag("◆")))
+	fmt.Println(boxLine(""))
 
 	// ── Bottom box: capabilities + author tagline ─────────────────────────────
 	fmt.Println(midBdr)
@@ -90,7 +89,7 @@ func PrintDragonBanner() {
 		nCyan("►") + " " +
 			nYel("Created by Filipi Pires") +
 			dim(" │ v0.1.0 │ OWASP 2025 │ ") +
-			nMag("Mainteined: CROSS-INTEL") +
+			nMag("Maintained: CROSS-INTEL") +
 			" " + nCyan("◄")))
 	fmt.Println(botBdr)
 	fmt.Println()
