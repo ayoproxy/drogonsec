@@ -1,9 +1,13 @@
+<div align="center">
+
 # 🛡️ DragonSec Security Scanner
 
 [![CI/CD](https://github.com/filipi86/drogonsec/actions/workflows/ci.yml/badge.svg)](https://github.com/filipi86/drogonsec/actions)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![OWASP Top 10:2025](https://img.shields.io/badge/OWASP-Top%2010%3A2025-orange.svg)](https://owasp.org/Top10/2025/)
-[![Go Version](https://img.shields.io/badge/Go-1.22+-00ADD8.svg)](https://golang.org)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![OWASP Top 10 2025](https://img.shields.io/badge/OWASP-Top%2010%3A2025-orange.svg)](https://owasp.org/Top10/2025/)
+[![Go 1.22+](https://img.shields.io/badge/Go-1.22+-00ADD8.svg)](https://golang.org)
+
+</div>
 
 <img width="1099" height="404" alt="image" src="https://github.com/user-attachments/assets/4f0c9136-cff9-4122-bbcc-e23eed71c48f" />
 
@@ -243,7 +247,7 @@ Contributions are welcome! Areas to contribute:
 - Documentation
 - Bug fixes
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+See [CONTRIBUTING](CONTRIBUTING.md) for guidelines.
 
 ---
 
@@ -258,3 +262,9 @@ Apache License 2.0 — See [LICENSE](LICENSE)
 Inspired by [Horusec](https://github.com/ZupIT/horusec) (ZupIT). DragonSec is its modern, actively maintained, and updated with enhanced capabilities.
 
 Built with: Go, Cobra, Viper, go-git.
+
+---
+
+## Maintained by
+
+This open-source project is maintained and supported by **[CROSS-INTEL](https://cross-intel.com)**.
