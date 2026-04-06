@@ -8,8 +8,47 @@ import (
 	"github.com/fatih/color"
 )
 
+// Environment is injected at build time via ldflags:
+//
+//	go build -ldflags "-X github.com/drogonsec/drogonsec/internal/cli.Environment=development"
+//	go build -ldflags "-X github.com/drogonsec/drogonsec/internal/cli.Environment=staging"
+//
+// Empty string (default) = production.
+var Environment string
+
 // ansiRE strips ANSI escape codes so we can measure true visual width.
 var ansiRE = regexp.MustCompile(`\x1b\[[0-9;]*m`)
+
+// bannerTheme holds the color functions and label for one environment.
+type bannerTheme struct {
+	frame     func(...interface{}) string // border chars ╔ ═ ║ etc.
+	titleText func(...interface{}) string // DROGONSEC ASCII art
+	envLabel  string                      // "[DEV]" | "[STAGING]" | ""
+}
+
+// resolveTheme returns the correct theme for the current Environment.
+func resolveTheme() bannerTheme {
+	switch Environment {
+	case "development":
+		return bannerTheme{
+			frame:     color.New(color.FgGreen, color.Bold).SprintFunc(),
+			titleText: color.New(color.FgHiCyan, color.Bold).SprintFunc(),
+			envLabel:  " [DEV]",
+		}
+	case "staging":
+		return bannerTheme{
+			frame:     color.New(color.FgHiYellow, color.Bold).SprintFunc(),
+			titleText: color.New(color.FgHiWhite, color.Bold).SprintFunc(),
+			envLabel:  " [STAGING]",
+		}
+	default: // production
+		return bannerTheme{
+			frame:     color.New(color.FgBlue, color.Bold).SprintFunc(),
+			titleText: color.New(color.FgHiYellow, color.Bold).SprintFunc(),
+			envLabel:  "",
+		}
+	}
+}
 
 // runeWidth returns the terminal display column-width for a single rune.
 // Block elements (█ etc.) and box-drawing characters are single-width in
@@ -41,28 +80,29 @@ func padTo(s string, w int) string {
 
 // PrintDragonBanner prints the DrogonSec cyberpunk banner.
 func PrintDragonBanner() {
+	theme := resolveTheme()
+	fr    := theme.frame
+	title := theme.titleText
 
 	// ── Colour palette ────────────────────────────────────────────────────────
-	nCyan := color.New(color.FgCyan, color.Bold).SprintFunc()
-	nMag  := color.New(color.FgHiMagenta, color.Bold).SprintFunc()
-	nYel  := color.New(color.FgHiYellow, color.Bold).SprintFunc()
-	bold  := color.New(color.FgHiWhite, color.Bold).SprintFunc()
-	dim   := color.New(color.FgHiBlack).SprintFunc()
-	gn    := color.New(color.FgHiGreen, color.Bold).SprintFunc()
-	title := color.New(color.FgHiYellow, color.Bold).SprintFunc() // Gold Cyberpunk
+	nYel := color.New(color.FgHiYellow, color.Bold).SprintFunc()
+	bold := color.New(color.FgHiWhite, color.Bold).SprintFunc()
+	dim  := color.New(color.FgHiBlack).SprintFunc()
+	gn   := color.New(color.FgHiGreen, color.Bold).SprintFunc()
+	nMag := color.New(color.FgHiMagenta, color.Bold).SprintFunc()
 
 	// ── Frame helpers (W = inner width between ╔ and ╗) ──────────────────────
 	// W=80 accommodates the DROGONSEC title lines (≤78 runes wide)
 	const W = 80
 
-	topBdr := nCyan("  ╔") + nCyan(strings.Repeat("═", W)) + nCyan("╗")
-	midBdr := nCyan("  ╠") + nCyan(strings.Repeat("═", W)) + nCyan("╣")
-	botBdr := nCyan("  ╚") + nCyan(strings.Repeat("═", W)) + nCyan("╝")
+	topBdr := fr("  ╔") + fr(strings.Repeat("═", W)) + fr("╗")
+	midBdr := fr("  ╠") + fr(strings.Repeat("═", W)) + fr("╣")
+	botBdr := fr("  ╚") + fr(strings.Repeat("═", W)) + fr("╝")
 
 	// boxLine wraps content in ║…║ using padTo so the right border aligns.
 	// inner = W-1: accounts for 1 leading space after ║ (left) + 0 before ║ (right)
 	boxLine := func(content string) string {
-		return nCyan("  ║ ") + padTo(content, W-1) + nCyan("║")
+		return fr("  ║ ") + padTo(content, W-1) + fr("║")
 	}
 
 	// centerIn centers content inside a boxLine (accounts for ANSI codes).
@@ -78,9 +118,10 @@ func PrintDragonBanner() {
 	fmt.Println()
 	fmt.Println(topBdr)
 	fmt.Println(boxLine(
-		nCyan("DRG-0x1") + nCyan(" ▸▸ ") +
+		fr("DRG-0x1") + fr(" ▸▸ ") +
 			bold("NEURAL THREAT SCANNER") +
-			dim("  │  SAST · SCA · LEAKS · GIT-HISTORY · IaC")))
+			dim("  │  SAST · SCA · LEAKS · GIT-HISTORY · IaC") +
+			fr(theme.envLabel)))
 	fmt.Println(midBdr)
 
 	// ── DROGONSEC — large ASCII title ─────────────────────────────────────────
@@ -107,13 +148,13 @@ func PrintDragonBanner() {
 			gn("LEAKS") + dim(" │ ") +
 			gn("GIT-HISTORY") + dim(" │ ") +
 			gn("IaC") + dim(" │ ") +
-			nCyan("Remediation AI (Coming soon)")))
+			fr("Remediation AI (Coming soon)")))
 	fmt.Println(boxLine(
-		nCyan("►") + " " +
+		fr("►") + " " +
 			nYel("Created by Filipi Pires") +
 			dim(" │ v0.1.0 │ OWASP 2025 │ ") +
-			nCyan("Maintained by: CROSS-INTEL") +
-			" " + nCyan("◄")))
+			fr("Maintained by: CROSS-INTEL") +
+			" " + fr("◄")))
 	fmt.Println(botBdr)
 	fmt.Println()
 }

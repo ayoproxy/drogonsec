@@ -4,6 +4,10 @@
 # ============ BUILD STAGE ============
 FROM golang:1.24-alpine AS builder
 
+# ENVIRONMENT is injected by CI (production | staging | development).
+# Defaults to production for plain `docker build .` invocations.
+ARG ENVIRONMENT=production
+
 # Install build dependencies
 RUN apk add --no-cache git ca-certificates make
 
@@ -16,10 +20,10 @@ RUN go mod download
 # Copy source code
 COPY . .
 
-# Build static binary
+# Build static binary with environment branding
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     go build \
-    -ldflags="-w -s -extldflags '-static'" \
+    -ldflags="-w -s -extldflags '-static' -X github.com/drogonsec/drogonsec/internal/cli.Environment=${ENVIRONMENT}" \
     -o /build/drogonsec \
     ./cmd/drogonsec/main.go
 
