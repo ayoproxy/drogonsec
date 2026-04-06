@@ -1,70 +1,84 @@
-# Drogonsec
+# 🛡️ Drogonsec — Security Scanner
 
-> **Modular Security Intelligence Framework** — Built for threat analysts, red teamers, and security researchers.
+[![CI/CD](https://github.com/filipi86/drogonsec/actions/workflows/ci.yml/badge.svg)](https://github.com/filipi86/drogonsec/actions)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![OWASP Top 10 2025](https://img.shields.io/badge/OWASP-Top%2010%3A2025-orange.svg)](https://owasp.org/Top10/2025/)
+[![Go 1.22+](https://img.shields.io/badge/Go-1.22+-00ADD8.svg)](https://golang.org)
 
-[![Version](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/filipi86/drogonsec)
-[![Language](https://img.shields.io/badge/language-Go-00ADD8)](https://golang.org)
-[![License](https://img.shields.io/badge/license-MIT-green)](https://github.com/filipi86/drogonsec/blob/main/LICENSE)
-[![Author](https://img.shields.io/badge/author-filipi86-orange)](https://github.com/filipi86)
+> An open-source, comprehensive security scanner combining **SAST**, **SCA**, and **secret detection** aligned with OWASP Top 10:2025 — created for intelligent remediation.
 
 ---
 
 ## What is Drogonsec?
 
-**Drogonsec** is an open-source, modular security framework written in Go, designed to assist security professionals in threat detection, intelligence gathering, and vulnerability analysis. The project follows a systematic module naming convention (`DRG-0x` format), allowing each component to operate independently or as part of a unified pipeline.
+**Drogonsec** is an open-source modular security framework written in Go, maintained by [CROSS-INTEL](https://cross-intel.com). It was built to give security professionals a single, unified tool to detect vulnerabilities across code, dependencies, secrets, and infrastructure — with AI-powered remediation on the roadmap.
 
-Built with extensibility in mind, Drogonsec is suitable for:
-
-- Security Operations Centers (SOC)
-- Red team and penetration testing workflows
-- Threat intelligence and malware hunting
-- Automated security scanning pipelines
+Inspired by Horusec, Drogonsec is its modern, actively maintained successor with enhanced capabilities and alignment to the latest OWASP standards.
 
 ---
 
-## Architecture Overview
+## Scanning Engines
 
-\`\`\`
-┌─────────────────────────────────────────────┐
-│                  DROGONSEC                  │
-│           Modular Security Framework        │
-├─────────────┬───────────────────────────────┤
-│  DRG-0x1    │  Core Engine                  │
-│  DRG-0x2    │  Neural Threat Scanner        │
-│  DRG-0x3    │  (future modules)             │
-└─────────────┴───────────────────────────────┘
-\`\`\`
-
-Each module is self-contained and communicates through a shared interface, making it easy to add, remove, or extend functionality without breaking the core system.
+| Engine | Description |
+|--------|-------------|
+| **SAST** | Static Application Security Testing for 20+ languages |
+| **SCA** | Software Composition Analysis — scan dependencies for CVEs |
+| **Leaks** | Secret detection — 50+ patterns (AWS, GCP, GitHub, JWT, SSH keys...) |
+| **IaC** | Infrastructure as Code misconfigurations (Terraform, Kubernetes) |
+| **AI** | AI-powered remediation suggestions *(Coming soon)* |
 
 ---
 
-## Key Features
+## Security Frameworks
 
-- **Modular Design** — Plug-and-play security modules using the `DRG-0x` naming convention
-- **Go-based** — Fast, cross-platform binary with minimal dependencies
-- **Neural Threat Scanner** — AI-assisted threat analysis via the DRG-0x2 module
-- **CLI Interface** — Simple and scriptable command-line interface
-- **Extensible** — Easy to add custom modules following the DRG-0x standard
-- **Open Source** — MIT licensed, community contributions welcome
+- **OWASP Top 10:2025** — All 10 categories covered (including 2 new: Supply Chain & Mishandling Exceptions)
+- **CWE** — Common Weakness Enumeration mapping
+- **CVSS 3.1** — Severity scoring
+- **SARIF 2.1** — GitHub/Azure DevOps integration
 
 ---
 
-## Quick Links
+## Supported Languages
 
-| Section | Description |
-|---|---|
-| [Installation](./installation.md) | How to install and build Drogonsec |
-| [Modules](./modules.md) | Reference for all DRG-0x modules |
-| [Usage Examples](./usage.md) | Practical use cases and examples |
-| [FAQ & Troubleshooting](./faq.md) | Common issues and solutions |
+`Python` `Java` `JavaScript` `TypeScript` `Go` `Kotlin` `C#` `PHP` `Ruby` `Swift` `Dart` `Elixir` `Erlang` `Shell` `C/C++` `HTML` `Terraform` `Kubernetes` `Nginx`
 
 ---
 
-## Author
+## OWASP Top 10:2025 Coverage
 
-**Filipi Pires** — Head of Identity Threat Labs & Global Threat Researcher  
-Cybersecurity Advocate, Instructor, Speaker and Writer about Malware Hunting
+| # | Category | Status |
+|---|----------|--------|
+| A01 | Broken Access Control | ✅ 23 rules |
+| A02 | Security Misconfiguration | ✅ 31 rules |
+| A03 | Software Supply Chain Failures 🆕 | ✅ SCA Engine |
+| A04 | Cryptographic Failures | ✅ 18 rules |
+| A05 | Injection | ✅ 45 rules |
+| A06 | Insecure Design | ✅ 15 rules |
+| A07 | Authentication Failures | ✅ 20 rules |
+| A08 | Software or Data Integrity Failures | ✅ 9 rules |
+| A09 | Security Logging & Alerting Failures | ✅ 11 rules |
+| A10 | Mishandling of Exceptional Conditions 🆕 | ✅ 8 rules |
 
-- GitHub: [@filipi86](https://github.com/filipi86)
-- Project: [github.com/filipi86/drogonsec](https://github.com/filipi86/drogonsec)
+---
+
+## Project Architecture
+
+```
+drogonsec/
+├── cmd/drogonsec/          # CLI entrypoint
+├── internal/
+│   ├── analyzer/           # Main orchestrator
+│   ├── engine/             # SAST rules engine (20+ languages)
+│   ├── leaks/              # Secret detection engine
+│   ├── sca/                # Dependency analysis engine
+│   ├── reporter/           # Text/JSON/SARIF/HTML reporters
+│   ├── ai/                 # AI remediation engine (Coming soon)
+│   └── config/             # Types and configuration
+└── rules/                  # YAML rule definitions (community-extensible)
+```
+
+---
+
+## Maintained by
+
+This open-source project is maintained and supported by **[CROSS-INTEL](https://cross-intel.com)**.
